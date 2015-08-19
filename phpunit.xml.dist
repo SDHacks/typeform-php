@@ -26,4 +26,8 @@
         <log type="coverage-text" target="build/coverage.txt"/>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
+    <php>
+        <env name="TYPEFORM_KEY" value="FORM_KEY" />
+        <env name="TYPEFORM_FORM_ID" value="FORM_ID" />
+    </php>
 </phpunit>
