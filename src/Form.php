@@ -42,6 +42,20 @@ class Form {
     protected $limit;
 
     /**
+     * Start date
+     *
+     * @var
+     */
+    protected $since;
+
+    /**
+     * End date
+     *
+     * @var
+     */
+    protected $until;
+
+    /**
      * Whether or not to get completed results
      *
      * @var bool
@@ -73,16 +87,20 @@ class Form {
      * @param GuzzleHttp\Client $http
      * @param $apiKey
      * @param $formId
+     * @param int $limit
+     * @param null $since
+     * @param null $until
+     * @param int $page
      * @param bool $completed
      * @param bool|false $raw
-     * @param int $limit
-     * @param int $page
      */
-    public function __construct(GuzzleHttp\Client $http, $apiKey, $formId, $raw = false, $limit = 50, $page = 0, $completed = true)
+    public function __construct(GuzzleHttp\Client $http, $apiKey, $formId, $limit = 50, $since = null, $until = null, $page = 0, $completed = true, $raw = false)
     {
         $this->setHttp($http);
         $this->setApiKey($apiKey);
         $this->setFormId($formId);
+        $this->setSince($since);
+        $this->setUntil($until);
         $this->setLimit($limit);
         $this->setPage($page);
         $this->setCompleted($completed);
@@ -101,14 +119,24 @@ class Form {
         // Calculate offset
         $offset = $this->getPage() * $this->getLimit();
 
+        $params = [
+            'key' => $this->getApiKey(),
+            'offset' => $offset,
+            'limit' => $this->getLimit(),
+            'completed' => (string) $this->getCompleted()
+        ];
+
+        if ($this->getSince()) {
+            $params['since'] = $this->getSince();
+        }
+
+        if ($this->getUntil()) {
+            $params['until'] = $this->getUntil();
+        }
+
         // Get data
         $response = $this->http->get($this->getFormId(), [
-            'query' => [
-                'key' => $this->getApiKey(),
-                'offset' => $offset,
-                'limit' => $this->getLimit(),
-                'completed' => (string) $this->getCompleted()
-            ]
+            'query' => $params
         ]);
 
         $data = json_decode($response->getBody(), true);
@@ -352,5 +380,44 @@ class Form {
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSince()
+    {
+        return $this->since;
+    }
+
+    /**
+     * @param $since
+     * @return $this
+     */
+    public function setSince($since)
+    {
+        $this->since = $since;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUntil()
+    {
+        return $this->until;
+    }
+
+    /**
+     * @param $until
+     * @return $this
+     */
+    private function setUntil($until)
+    {
+        $this->until = $until;
+
+        return $this;
+    }
+
 
 }

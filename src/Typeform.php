@@ -24,9 +24,9 @@ class Typeform {
         $this->apiKey = $apiKey;
     }
 
-    public function getForm($formId, $raw = false, $limit = 50, $page = 0)
+    public function getForm($formId, $raw = false, $limit = 50, $since = null, $until = null, $page = 0, $completed = true)
     {
-        return new Form($this->getHttp(), $this->getApiKey(), $formId, $raw, $limit = 50, $page = 0);
+        return new Form($this->getHttp(), $this->getApiKey(), $formId, $limit, $since, $until, $page, $completed, $raw);
     }
 
     /**
