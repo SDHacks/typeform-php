@@ -42,6 +42,13 @@ class Form {
     protected $limit;
 
     /**
+     * Whether or not to get completed results
+     *
+     * @var bool
+     */
+    protected $completed;
+
+    /**
      * Questions
      *
      * @var []
@@ -66,17 +73,19 @@ class Form {
      * @param GuzzleHttp\Client $http
      * @param $apiKey
      * @param $formId
+     * @param bool $completed
      * @param bool|false $raw
      * @param int $limit
      * @param int $page
      */
-    public function __construct(GuzzleHttp\Client $http, $apiKey, $formId, $raw = false, $limit = 50, $page = 0)
+    public function __construct(GuzzleHttp\Client $http, $apiKey, $formId, $raw = false, $limit = 50, $page = 0, $completed = true)
     {
         $this->setHttp($http);
         $this->setApiKey($apiKey);
         $this->setFormId($formId);
         $this->setLimit($limit);
         $this->setPage($page);
+        $this->setCompleted($completed);
 
         return $this->getForm($raw);
     }
@@ -97,7 +106,8 @@ class Form {
             'query' => [
                 'key' => $this->getApiKey(),
                 'offset' => $offset,
-                'limit' => $this->getLimit()
+                'limit' => $this->getLimit(),
+                'completed' => (string) $this->getCompleted()
             ]
         ]);
 
@@ -320,6 +330,25 @@ class Form {
     public function setStats($stats)
     {
         $this->stats = $stats;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCompleted()
+    {
+        return $this->completed;
+    }
+
+    /**
+     * @param $completed
+     * @return $this
+     */
+    public function setCompleted($completed)
+    {
+        $this->completed = $completed;
 
         return $this;
     }
