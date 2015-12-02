@@ -139,7 +139,11 @@ class Form {
             'query' => $params
         ]);
 
-        $data = json_decode($response->getBody(), true);
+        $body = $response->getBody();
+        $data = json_decode($body, true);
+        if (is_null($data) && strpos($body, 'login') !== false) {
+            throw new \Exception('The supplied API key is not valid');
+        }
 
         if ($raw) {
             return $data;
